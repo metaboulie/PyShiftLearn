@@ -1,15 +1,29 @@
 # poetry
 .venv
+
+# jupyter
+.ipynb_checkpoints
+
 # vscode
 .vscode
+
 #pycharm
 .idea
+
 #cache
 *__pycache__
 *.pyc
+.pytest_cache
 
-
-# ignore
+# Development
 main.py
 Datasets
 Results
+SavedModels
+*.html
+
+# MacOS
+.DS_Store
+
+# TODO
+TODO.md

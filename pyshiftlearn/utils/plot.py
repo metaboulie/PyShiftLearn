@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
@@ -13,6 +11,8 @@ from typing import Sequence
 
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+
+from pyshiftlearn.config import MEDIA_PATH
 
 
 def plot_loss(loss_dict: dict[str, list[float]], split: str, filename: str) -> plt.Axes:
@@ -29,7 +29,6 @@ def plot_loss(loss_dict: dict[str, list[float]], split: str, filename: str) -> p
 
     Returns:
         plt.Axes: The axes object representing the plot.
-
     """
     # Plot the loss
     fig, ax = plt.subplots(figsize=(16, 6))
@@ -41,13 +40,25 @@ def plot_loss(loss_dict: dict[str, list[float]], split: str, filename: str) -> p
     ax.legend(loc="best")
 
     # Save the plot image
-    plt.savefig(f"{Path.cwd().parent.parent}/images/{filename}.png")
+    plt.savefig(MEDIA_PATH / f"{filename}.png")
 
     return ax
 
 
-# Plot the metrics results by dataset with bar groups
-def plot_metrics(metrics_dict: dict[str, dict[str, float]], filename: str) -> plt.Axes:
+def plot_metrics(metrics_dict: dict[str, dict[str, float]], filename: str = None) -> plt.Axes:
+    """
+    Generates a plot of the metrics values for each dataset after training and saves it as an image.
+
+    Parameters:
+        metrics_dict (dict[str, dict[str, float]]):
+            A dictionary mapping the names of the metrics to their respective values.
+        filename (str):
+            The name of the file to save the plot image as.
+
+    Returns:
+        plt.Axes: The axes object representing the plot.
+    """
+
     data = pd.DataFrame(metrics_dict).transpose()
     ax = data.plot(kind="bar", figsize=(16, 7), rot=0)
     ax.set_title(f"Metrics by Dataset")
@@ -55,16 +66,39 @@ def plot_metrics(metrics_dict: dict[str, dict[str, float]], filename: str) -> pl
     ax.set_ylabel("Value")
     ax.legend(loc="best")
     plt.xticks(rotation=10)
-    plt.savefig(f"{Path.cwd().parent.parent}/images/{filename}.png")
+    if filename is not None:
+        plt.savefig(MEDIA_PATH / f"{filename}.png")
     return ax
 
 
-def plot_proportion(labels: Sequence[str], dataset_name: str, true_values: Sequence[float],
+def plot_proportion(labels: Sequence[str], dataset_name: str, true_values: Sequence[float], filename: str = None,
                     pred_values: Sequence[float] = None,
-                    split: bool = True):
+                    split: bool = True, **kwargs) -> go.Figure:
+    """
+    Generates a pie chart of the proportion of each label in the dataset.
+
+    Parameters:
+        labels (Sequence[str]):
+            A list of the labels in the dataset.
+        dataset_name (str):
+            The name of the dataset.
+        true_values (Sequence[float]):
+            A list of the true label proportions in the dataset.
+        filename (str):
+            The name of the file to save the plot image as.
+        pred_values (Sequence[float]):
+            A list of the predicted label proportions in the dataset.
+        split (bool):
+            Whether the plot is for the training or validation set.
+        **kwargs:
+            Additional keyword arguments to pass to the `make_subplots` function.
+
+    Returns:
+        go.Figure: The figure object representing the plot.
+    """
     if split:
         # Create subplots: use 'domain' type for Pie subplot
-        fig = make_subplots(rows=1, cols=2, specs=[[{'type': 'domain'}, {'type': 'domain'}]])
+        fig = make_subplots(rows=1, cols=2, specs=[[{'type': 'domain'}, {'type': 'domain'}]], **kwargs)
         fig.add_trace(go.Pie(labels=labels, values=true_values, name="True"),
                       1, 1)
         fig.add_trace(go.Pie(labels=labels, values=pred_values, name="Pred"),
@@ -78,15 +112,35 @@ def plot_proportion(labels: Sequence[str], dataset_name: str, true_values: Seque
             # Add annotations in the center of the donut pies.
             annotations=[dict(text='True', x=0.18, y=0.5, font_size=20, showarrow=False),
                          dict(text='Pred', x=0.82, y=0.5, font_size=20, showarrow=False)])
-        fig.show()
     else:
         fig = go.Figure(data=[go.Pie(labels=labels, values=true_values)])
         fig.update_layout(title_text=f"Label proportions in {dataset_name}")
-        fig.show()
-    pass
+
+    if filename is not None:
+        fig.write_image(MEDIA_PATH / f"{filename}.png")
+
+    return fig
 
 
-def plot_dash_table(result: pd.DataFrame, method_names: list[str], dataset_names: list[str], summary_names: list[str]):
+def plot_dash_table(
+    result: pd.DataFrame, method_names: Sequence[str], dataset_names: Sequence[str], summary_names: Sequence[str]
+) -> Dash:
+    """
+    Plot a dash table of the results
+
+    Parameters:
+        result (pd.DataFrame):
+            The result dataframe
+        method_names (Sequence[str]):
+            The names of the methods
+        dataset_names (Sequence[str]):
+            The names of the datasets
+        summary_names (Sequence[str]):
+            The names of the summaries
+
+    Returns:
+        Dash: The dash app
+    """
     app = Dash(__name__)
 
     method_columns = [
@@ -185,5 +239,4 @@ def plot_dash_table(result: pd.DataFrame, method_names: list[str], dataset_names
         column_selectable="multi",
     )
 
-    # Run the Dash App
-    app.run()
+    return app

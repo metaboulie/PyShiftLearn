@@ -3,9 +3,11 @@
 ### The path of the datasets
 DATASET_PATH = "../Datasets"
 ### The path of the results
-RESULTS_PATH = "../results"
+RESULTS_PATH = "../Results"
 ### The path of the saved models
-SAVED_MODELS_PATH = "../saved_models"
+SAVED_MODELS_PATH = "../SavedModels"
+### The path of the Media
+MEDIA_PATH = "../Media"
 
 ## Neural Networks
 ### Mini-Batch Gradient Decent

@@ -11,6 +11,10 @@
 ![GitHub License](https://img.shields.io/github/license/metaboulie/pyshiftlearn?style=for-the-badge&logo=Open%20Source%20Initiative)
 ![Static Badge](https://img.shields.io/badge/Pytorch-2.0%2B-grey?style=for-the-badge&logo=Pytorch)
 
-
-
 > Under Development
+
+## Usage
+
+<p align="center">
+    <img src="Media/sample_code.png" alt='sample_code' width="100%"/>
+</p>
