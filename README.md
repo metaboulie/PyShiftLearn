@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-    <img src="Media/Banner.png" alt='Banner'/>
+    <img src="Media/Banner.png" alt='Banner' width="70%" />
 </p>
 
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/metaboulie/PyShiftLearn?style=for-the-badge&logo=Github)
